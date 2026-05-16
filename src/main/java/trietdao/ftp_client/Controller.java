@@ -76,6 +76,7 @@ public class Controller implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        // Render folders with a simple [DIR] prefix for readability.
         remoteListView.setItems(remoteItems);
         remoteListView.setCellFactory(listView -> new ListCell<RemoteItem>() {
             @Override
@@ -90,6 +91,7 @@ public class Controller implements Initializable {
         });
 
         remoteListView.setOnMouseClicked(event -> {
+            // Double-click opens remote folders.
             if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
                 openSelectedRemoteItem();
             }
@@ -129,7 +131,6 @@ public class Controller implements Initializable {
             ftpClient.login(usernameField.getText().trim(), passwordField.getText());
 
             connected = true;
-            remoteCurrentPath = ftpClient.printWorkingDirectory();
             refreshRemoteListing();
             setConnectedState(true);
             appendNotification("Connected to " + hostField.getText().trim() + ":" + portField.getText().trim());
@@ -302,6 +303,7 @@ public class Controller implements Initializable {
         remotePathLabel.setText(remoteCurrentPath);
 
         remoteItems.setAll(parseListing(ftpClient.list(null), remoteCurrentPath));
+        // Add a synthetic parent entry for navigation when not at root.
         if (!"/".equals(remoteCurrentPath)) {
             remoteItems.add(0, RemoteItem.parent(parentRemotePath(remoteCurrentPath)));
         }
@@ -398,6 +400,7 @@ public class Controller implements Initializable {
     }
 
     private void appendProtocolLog(String message) {
+        // FTP callbacks can come from non-FX threads; marshal to UI thread when needed.
         if (Platform.isFxApplicationThread()) {
             appendConsoleText(message, false);
             return;
@@ -426,6 +429,7 @@ public class Controller implements Initializable {
 
         consoleFlow.getChildren().add(text);
 
+        // Keep the newest message visible.
         if (consoleScrollPane != null) {
             consoleScrollPane.layout();
             consoleScrollPane.setVvalue(1.0);

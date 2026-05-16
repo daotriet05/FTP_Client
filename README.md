@@ -4,7 +4,7 @@ A lightweight Java FTP client with a JavaFX GUI. This project demonstrates a sim
 
 ## Screenshot
 
-![FTP Client UI](image.png)
+![FTP Client UI](capture.png)
 
 **Location:** [README.md](README.md)
 
